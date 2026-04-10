@@ -85,6 +85,22 @@ npx playwright show-report   # open the HTML report after a CI-style run
 
 Playwright will auto-start the Vite dev server (`webServer` config in `playwright.config.ts`). If `npm run dev` is already running, Playwright reuses it.
 
+### 4. (Optional) View the Allure report locally
+
+Every test run also produces Allure raw results in `playwright/allure-results/`. To view them as an HTML report:
+
+```bash
+cd playwright
+npm run allure:serve              # one-shot: generate + open in your browser
+# or
+npm run allure:generate           # build playwright/allure-report/
+npm run allure:open               # serve playwright/allure-report/
+```
+
+Allure's CLI is bundled via the `allure-commandline` npm dependency, but it's a Java app under the hood — you need a JRE on `PATH`. If `java -version` fails, install one with `brew install --cask temurin` (macOS) or your distro's package manager.
+
+The Allure report adds severity/feature/owner grouping, history & trend graphs across runs (in CI), and behavior-driven navigation. It complements rather than replaces the built-in Playwright HTML report — for interactive **trace replay** of a failure, use `npx playwright show-trace` against the built-in report.
+
 ## Viewing test reports in GitHub Actions
 
 Every push to `main` and every pull request triggers the **Playwright tests** workflow (`.github/workflows/playwright.yml`). After a run finishes, the HTML report is published as a downloadable artifact you can browse locally.
@@ -119,6 +135,15 @@ This opens Playwright's trace viewer with DOM snapshots, network logs, and a fra
 ### Inline failure annotations
 
 The workflow also uses Playwright's `github` reporter, so any failed assertions appear as **annotations directly on the workflow run page** and on the PR's "Files changed" tab — no need to download the artifact for a quick triage.
+
+### Allure report (with history)
+
+Alongside the built-in Playwright report, the workflow also publishes an **Allure report** with severity/feature/owner grouping and trend graphs across runs.
+
+- **On every run** (push and PR), the report is uploaded as an artifact named **`allure-report`** at the bottom of the run summary page — same download/unzip flow as `playwright-report` above. Open `index.html` in any browser, no server needed.
+- **On `main` pushes**, the same report is also published to **GitHub Pages**: `https://<owner>.github.io/<repo>/`. Each main push appends to a 30-run history kept in the `gh-pages` branch, so the report's home page shows pass-rate trends, duration trends, and per-test history arrows. PRs do not update Pages — only artifact uploads.
+
+**One-time setup the first time you push the workflow:** in the GitHub repo settings, enable **Pages → Source: Deploy from a branch → `gh-pages` / `(root)`**. The first workflow run on `main` creates the branch; until Pages is enabled the URL will 404. The workflow already has `permissions: contents: write` so the default `GITHUB_TOKEN` can push to `gh-pages`.
 
 ## Generating new Playwright tests with Claude Code
 

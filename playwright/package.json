@@ -8,11 +8,16 @@
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:report": "playwright show-report",
-    "install:browsers": "playwright install --with-deps chromium"
+    "install:browsers": "playwright install --with-deps chromium",
+    "allure:generate": "allure generate allure-results -o allure-report --clean",
+    "allure:open": "allure open allure-report",
+    "allure:serve": "allure serve allure-results"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",
-    "@types/node": "^22.10.0"
+    "@types/node": "^22.10.0",
+    "allure-commandline": "^2.38.1",
+    "allure-playwright": "^3.7.1"
   },
   "engines": {
     "node": ">=20"

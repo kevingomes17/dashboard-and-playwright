@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Locator } from "@playwright/test"
+import { tagTest } from "./_allure"
 
 function tracesCard(page: Page): Locator {
   return page
@@ -11,6 +12,11 @@ test.describe("Trace waterfall", () => {
   test("renders the recent trace list and selects the first trace by default", async ({
     page,
   }) => {
+    await tagTest({
+      feature: "Distributed traces",
+      story: "Trace list",
+      severity: "normal",
+    })
     await page.goto("/")
     const card = tracesCard(page)
     await expect(card).toBeVisible()
@@ -29,6 +35,11 @@ test.describe("Trace waterfall", () => {
   test("clicking a different trace updates the waterfall header", async ({
     page,
   }) => {
+    await tagTest({
+      feature: "Distributed traces",
+      story: "Waterfall navigation",
+      severity: "normal",
+    })
     await page.goto("/")
     const card = tracesCard(page)
 

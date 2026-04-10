@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test"
+import { tagTest } from "./_allure"
 
 const SERVICES = [
   "api-gateway",
@@ -11,6 +12,11 @@ const SERVICES = [
 
 test.describe("Overview page smoke", () => {
   test("renders all five widgets", async ({ page }) => {
+    await tagTest({
+      feature: "Overview page",
+      story: "Initial render",
+      severity: "critical",
+    })
     await page.goto("/")
     const main = page.locator("main")
 
@@ -29,6 +35,11 @@ test.describe("Overview page smoke", () => {
   })
 
   test("lists all six mock services in the health grid", async ({ page }) => {
+    await tagTest({
+      feature: "Service health",
+      story: "Service roster",
+      severity: "normal",
+    })
     await page.goto("/")
     const main = page.locator("main")
 
@@ -43,6 +54,11 @@ test.describe("Overview page smoke", () => {
   })
 
   test("page loads without console errors", async ({ page }) => {
+    await tagTest({
+      feature: "Overview page",
+      story: "Stability",
+      severity: "critical",
+    })
     const errors: string[] = []
     page.on("console", (msg) => {
       if (msg.type() === "error") errors.push(msg.text())

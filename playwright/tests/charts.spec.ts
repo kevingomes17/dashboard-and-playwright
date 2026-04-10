@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Locator } from "@playwright/test"
+import { tagTest } from "./_allure"
 
 function cardByTitle(page: Page, title: string): Locator {
   return page
@@ -17,6 +18,11 @@ async function pickService(card: Locator, service: string): Promise<void> {
 
 test.describe("Chart service selectors", () => {
   test("latency chart filters by service", async ({ page }) => {
+    await tagTest({
+      feature: "Latency chart",
+      story: "Service filter",
+      severity: "normal",
+    })
     await page.goto("/")
     const latency = cardByTitle(page, "Latency (p50 / p95 / p99)")
     await expect(latency).toBeVisible()
@@ -29,6 +35,11 @@ test.describe("Chart service selectors", () => {
   })
 
   test("error rate chart filters by service", async ({ page }) => {
+    await tagTest({
+      feature: "Error rate chart",
+      story: "Service filter",
+      severity: "normal",
+    })
     await page.goto("/")
     const errors = cardByTitle(page, "Errors (5xx)")
     await expect(errors).toBeVisible()

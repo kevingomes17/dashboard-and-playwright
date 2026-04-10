@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   test:
     name: e2e (chromium)
@@ -20,6 +23,11 @@ jobs:
           cache-dependency-path: |
             base-dashboard/package-lock.json
             playwright/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
       - name: Install base-dashboard dependencies
         working-directory: base-dashboard
@@ -52,3 +60,36 @@ jobs:
           name: playwright-test-results
           path: playwright/test-results/
           retention-days: 14
+
+      - name: Get Allure history from gh-pages
+        if: ${{ !cancelled() }}
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+        continue-on-error: true
+
+      - name: Build Allure report (with history)
+        if: ${{ !cancelled() }}
+        uses: simple-elf/allure-report-action@v1.9
+        with:
+          allure_results: playwright/allure-results
+          allure_history: allure-history
+          keep_reports: 30
+          gh_pages: gh-pages
+
+      - name: Upload Allure report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-history
+          retention-days: 14
+
+      - name: Deploy Allure report to gh-pages
+        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history

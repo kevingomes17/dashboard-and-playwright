@@ -47,6 +47,7 @@ Key facts about the setup:
 - **Dev server is auto-managed.** `playwright.config.ts` has a `webServer` block that runs `npm run dev` in `../base-dashboard` and waits for `http://localhost:5173`. `reuseExistingServer: !process.env.CI` — locally it attaches to an already-running dev server, in CI it starts a fresh one.
 - **Deterministic fixtures, no stub server.** All data comes from `MockMetricsClient` (`base-dashboard/apps/web/src/lib/metrics/mock-client.ts`) which uses a seeded `mulberry32` RNG, so charts and traces produce the same values every run. No `data-testid` attributes were added to source — tests use text and ARIA roles.
 - **Locator strategy:** scope queries to `page.locator("main")` because the sidebar nav has its own "Services"/"Traces" buttons that collide with widget headings. For base-ui Selects, use `getByRole("combobox")` for the trigger and `getByRole("option", { name, exact: true })` for items — the popup is rendered into a portal, so options must be queried from `page` (not from inside the card).
+- **Allure is also wired up.** Every run writes raw results to `playwright/allure-results/`; use `npm run allure:serve` for the local interactive HTML report, or `npm run allure:generate && npm run allure:open` to build it under `playwright/allure-report/`. CI publishes the report to GitHub Pages with 30 runs of history. Tests are tagged via `tagTest({ feature, story, severity })` from `playwright/tests/_allure.ts` (epic and owner are constant for the repo).
 
 ## CI
 

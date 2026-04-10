@@ -10,8 +10,15 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
-    ? [["html", { open: "never" }], ["github"]]
-    : "list",
+    ? [
+        ["html", { open: "never" }],
+        ["allure-playwright", { resultsDir: "allure-results", detail: true }],
+        ["github"],
+      ]
+    : [
+        ["list"],
+        ["allure-playwright", { resultsDir: "allure-results" }],
+      ],
   use: {
     baseURL: BASE_URL,
     trace: "on-first-retry",

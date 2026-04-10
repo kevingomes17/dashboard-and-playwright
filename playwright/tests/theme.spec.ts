@@ -1,7 +1,13 @@
 import { test, expect } from "@playwright/test"
+import { tagTest } from "./_allure"
 
 test.describe("Theme toggle", () => {
   test("toggles the dark class on <html>", async ({ page }) => {
+    await tagTest({
+      feature: "Theme",
+      story: "Dark mode toggle",
+      severity: "minor",
+    })
     await page.goto("/")
 
     const html = page.locator("html")
