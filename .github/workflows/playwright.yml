@@ -69,14 +69,18 @@ jobs:
           path: gh-pages
         continue-on-error: true
 
-      - name: Build Allure report (with history)
+      - name: Merge previous Allure history into new results
         if: ${{ !cancelled() }}
-        uses: simple-elf/allure-report-action@v1.9
-        with:
-          allure_results: playwright/allure-results
-          allure_history: allure-history
-          keep_reports: 30
-          gh_pages: gh-pages
+        run: |
+          mkdir -p playwright/allure-results/history
+          if [ -d gh-pages/history ]; then
+            cp -R gh-pages/history/* playwright/allure-results/history/ || true
+          fi
+
+      - name: Build Allure report
+        if: ${{ !cancelled() }}
+        working-directory: playwright
+        run: npx allure generate allure-results -o ../allure-history --clean
 
       - name: Upload Allure report
         if: ${{ !cancelled() }}
